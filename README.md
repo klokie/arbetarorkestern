@@ -37,25 +37,24 @@ ln -s "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault/persona
 ```
 (Don't commit those symlinks.)
 
-## Cloudflare Pages setup
+## Cloudflare setup
 
-GitHub repo settings:
+This site deploys as a **Cloudflare Worker with static assets** (the modern path; same hosting as Pages but unified product). Cloudflare's Git integration watches `klokie/arbetarorkestern` and rebuilds on every push.
 
-**Variables**
-- `PUBLIC_SITE_URL` = `https://arbetarorkestern.klokie.com`
-- `CLOUDFLARE_PROJECT_NAME` = `arbetarorkestern`
+The `wrangler.jsonc` in repo root tells Cloudflare to serve `./dist` as static assets.
 
-**Secrets**
-- `CLOUDFLARE_API_TOKEN` (scope: Cloudflare Pages → Edit)
-- `CLOUDFLARE_ACCOUNT_ID`
+**On Cloudflare:**
+- Build command: `pnpm build`
+- Deploy command: `npx wrangler deploy` (default — uses `wrangler.jsonc`)
+- Variables: `PUBLIC_SITE_URL=https://arbetarorkestern.klokie.com`, `NODE_VERSION=22`
+- Custom domain: `arbetarorkestern.klokie.com` → CNAME at klokie.com's DNS
 
-DNS: at klokie.com's DNS provider, add a CNAME `arbetarorkestern` → `<project>.pages.dev` (CF gives you the exact target after creating the project).
+**On GitHub:** the only workflow is `check.yml` — typecheck + build on every push and PR. No deploy step here; Cloudflare handles that.
 
 ## Deploy triggers
 
-- Push to `main` (code changes)
-- `repository_dispatch` event `vault-content-sync` (content changes from the vault)
-- Manual: GitHub Actions → Deploy → Run workflow
+- Push to `main` (code or content) → Cloudflare auto-builds and deploys
+- Vault content change → `sync-sites.yml` in vault repo pushes a commit here → Cloudflare auto-builds
 
 ## Content shape
 
