@@ -21,8 +21,8 @@ importers:
         specifier: ^3.2.1
         version: 3.7.2
       '@klokie/theme':
-        specifier: file:../klokie-theme
-        version: file:../klokie-theme(astro@5.18.1(@types/node@22.19.17)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3))
+        specifier: github:klokie/klokie-theme
+        version: https://codeload.github.com/klokie/klokie-theme/tar.gz/e09b08a9a9119fd3ece3719522897a52d9167782(astro@5.18.1(@types/node@22.19.17)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3))
       astro:
         specifier: ^5.0.0
         version: 5.18.1(@types/node@22.19.17)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3)
@@ -583,8 +583,9 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
-  '@klokie/theme@file:../klokie-theme':
-    resolution: {directory: ../klokie-theme, type: directory}
+  '@klokie/theme@https://codeload.github.com/klokie/klokie-theme/tar.gz/e09b08a9a9119fd3ece3719522897a52d9167782':
+    resolution: {tarball: https://codeload.github.com/klokie/klokie-theme/tar.gz/e09b08a9a9119fd3ece3719522897a52d9167782}
+    version: 0.1.0
     peerDependencies:
       astro: ^5.0.0
 
@@ -2573,7 +2574,7 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@klokie/theme@file:../klokie-theme(astro@5.18.1(@types/node@22.19.17)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3))':
+  '@klokie/theme@https://codeload.github.com/klokie/klokie-theme/tar.gz/e09b08a9a9119fd3ece3719522897a52d9167782(astro@5.18.1(@types/node@22.19.17)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3))':
     dependencies:
       astro: 5.18.1(@types/node@22.19.17)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3)
 
