@@ -19,16 +19,17 @@ const past = all.filter((g) => g.data.date.getTime() < now || g.data.status === 
       <p class="muted">Inga spelningar planerade just nu.</p>
     ) : (
       <div class="grid">
-        {upcoming.map(({ data }) => (
-          <GigCard
-            title={data.title}
-            date={data.date}
-            venue={data.venue}
-            city={data.city}
-            ticketUrl={data.ticketUrl}
-            status={data.status}
-            locale={siteConfig.locale}
-          />
+        {upcoming.map(({ id, data }) => (
+          <a class="card-link" href={`${siteConfig.paths.gigs}/${id}`}>
+            <GigCard
+              title={data.title}
+              date={data.date}
+              venue={data.venue}
+              city={data.city}
+              status={data.status}
+              locale={siteConfig.locale}
+            />
+          </a>
         ))}
       </div>
     )}
@@ -37,15 +38,17 @@ const past = all.filter((g) => g.data.date.getTime() < now || g.data.status === 
       <>
         <h2>Tidigare</h2>
         <div class="grid">
-          {past.map(({ data }) => (
-            <GigCard
-              title={data.title}
-              date={data.date}
-              venue={data.venue}
-              city={data.city}
-              status="past"
-              locale={siteConfig.locale}
-            />
+          {past.map(({ id, data }) => (
+            <a class="card-link" href={`${siteConfig.paths.gigs}/${id}`}>
+              <GigCard
+                title={data.title}
+                date={data.date}
+                venue={data.venue}
+                city={data.city}
+                status="past"
+                locale={siteConfig.locale}
+              />
+            </a>
           ))}
         </div>
       </>
@@ -75,4 +78,11 @@ const past = all.filter((g) => g.data.date.getTime() < now || g.data.status === 
   @media (min-width: 600px) {
     .grid { grid-template-columns: 1fr 1fr; }
   }
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 120ms ease;
+  }
+  .card-link:hover { transform: translateY(-2px); }
 </style>

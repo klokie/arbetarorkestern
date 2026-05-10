@@ -1,0 +1,137 @@
+---
+import { getCollection, render } from "astro:content";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { siteConfig } from "@/site/config";
+
+export async function getStaticPaths() {
+  const items = await getCollection("gigs", ({ data }) => data.published);
+  return items.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, date, venue, city, ticketUrl, status } = entry.data;
+const dateLabel = date.toLocaleDateString(siteConfig.locale, {
+  weekday: "long", day: "numeric", month: "long", year: "numeric",
+});
+const isPast = status === "past" || date.getTime() < Date.now();
+const showTickets = ticketUrl && status === "upcoming" && !isPast;
+---
+
+<SiteLayout title={title} description={`${venue}${city ? " · " + city : ""}`}>
+  <article class="container">
+    <div class="meta">
+      <time datetime={date.toISOString()}>{dateLabel}</time>
+    </div>
+    <h1>{title}</h1>
+    <p class="where">
+      <span>{venue}</span>{city && <span class="muted"> · {city}</span>}
+    </p>
+    {status === "cancelled" && <p class="flag">Inställd</p>}
+    {showTickets && (
+      <p class="cta-row">
+        <a class="cta" href={ticketUrl}>→ Biljetter</a>
+      </p>
+    )}
+    <div class="prose">
+      <Content />
+    </div>
+    <p class="back"><a href={siteConfig.paths.gigs}>← Alla spelningar</a></p>
+  </article>
+</SiteLayout>
+
+<style>
+  .container { max-width: 680px; margin: 0 auto; padding: 48px 24px; }
+  .meta {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .where {
+    font-family: var(--font-body);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  .where .muted { color: var(--muted); }
+  .flag {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .cta-row { margin-bottom: 24px; }
+  .cta {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
+    border-radius: var(--radius-card, 4px);
+    padding: 8px 14px;
+  }
+  .prose :global(p) {
+    font-family: var(--font-body);
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.65;
+    margin-bottom: 1.2em;
+  }
+  .prose :global(h2) {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 0.01em;
+    margin: 1.5em 0 0.6em;
+  }
+  .prose :global(h3) {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    margin: 1.5em 0 0.5em;
+  }
+  .prose :global(a) { color: var(--primary); }
+  .prose :global(img) {
+    border-radius: var(--radius-card);
+    margin: 1.5em 0;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.4em;
+    margin-bottom: 1.2em;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--primary);
+    padding-left: 1em;
+    color: var(--muted);
+    font-style: italic;
+    margin: 1.2em 0;
+  }
+  .back {
+    margin-top: 48px;
+    font-family: var(--font-body);
+    font-size: 14px;
+  }
+  .back a { color: var(--muted); }
+</style>
