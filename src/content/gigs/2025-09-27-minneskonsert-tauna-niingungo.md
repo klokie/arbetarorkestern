@@ -9,6 +9,8 @@ published: true
 
 Minneskonsert för den namibiske musikern Tauna Niingungo, framförd på Etnografiska museet i Stockholm.
 
+Nedan hittar ni den exakta sångordningen för kören och solon.
+
 ## Körsånger (ca 15 min total)
 
 1. Thuma mina -- ~3:30
