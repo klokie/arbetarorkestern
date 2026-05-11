@@ -46,4 +46,4 @@ Nedan hittar ni den exakta sångordningen för kören och solon.
 1. 📖 Diktläsning -- Lefifi Tladi -- ~3:00
 2. 🎶 We shall not be moved (Trad, allsång) -- ~3:00
 3. 🎶 Nkosi Sikeleli Afrika (Gud välsigne Afrika) -- ~2:30
-4. 👧👦 Taunas barns tal till oss -- ~3:00
+4. 👧🏾👦🏾 Taunas barns tal till oss -- ~3:00
