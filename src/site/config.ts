@@ -13,6 +13,7 @@ export const siteConfig = {
   preset: jordsang as ThemePreset,
   nav: [
     { label: "Spelningar", href: "/spelningar" },
+    { label: "Media", href: "/media" },
     { label: "Nyheter", href: "/nyheter" },
     { label: "Om", href: "/om" },
   ],
@@ -23,6 +24,7 @@ export const siteConfig = {
   paths: {
     gigs: "/spelningar",
     news: "/nyheter",
+    media: "/media",
   },
 };
 

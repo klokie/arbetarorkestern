@@ -35,4 +35,18 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { gigs, news, pages };
+const videos = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/videos" }),
+  schema: z.object({
+    title: z.string(),
+    videoId: z.string(),
+    date: z.coerce.date(),
+    uploadedAt: z.coerce.date().optional(),
+    recordedAt: z.coerce.date().optional(),
+    duration: z.number().optional(),
+    description: z.string().optional(),
+    published: z.boolean().default(true),
+  }),
+});
+
+export const collections = { gigs, news, pages, videos };
