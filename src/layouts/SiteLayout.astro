@@ -29,5 +29,9 @@ const fullTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
   <main>
     <slot />
   </main>
-  <SiteFooter copyrightName={siteConfig.copyrightName} />
+  <SiteFooter
+    copyrightName={siteConfig.copyrightName}
+    social={siteConfig.social}
+    credit={{ label: "Made with 🤎 by Klokie.com", href: "https://klokie.com" }}
+  />
 </BaseLayout>
