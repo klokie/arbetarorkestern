@@ -30,16 +30,18 @@ const allNews = (await getCollection("news", ({ data }) => data.published))
       <p class="muted">Inga spelningar planerade just nu — kom tillbaka snart.</p>
     ) : (
       <div class="gig-list">
-        {upcomingGigs.map(({ data }) => (
-          <GigCard
-            title={data.title}
-            date={data.date}
-            venue={data.venue}
-            city={data.city}
-            ticketUrl={data.ticketUrl}
-            status={data.status}
-            locale={siteConfig.locale}
-          />
+        {upcomingGigs.map(({ id, data }) => (
+          <a class="card-link" href={`${siteConfig.paths.gigs}/${id}`}>
+            <GigCard
+              title={data.title}
+              date={data.date}
+              venue={data.venue}
+              city={data.city}
+              ticketUrl={data.ticketUrl}
+              status={data.status}
+              locale={siteConfig.locale}
+            />
+          </a>
         ))}
       </div>
     )}
@@ -89,6 +91,13 @@ const allNews = (await getCollection("news", ({ data }) => data.published))
   @media (min-width: 600px) {
     .gig-list { grid-template-columns: 1fr 1fr; }
   }
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 120ms ease;
+  }
+  .card-link:hover { transform: translateY(-2px); }
   .news-list { display: flex; flex-direction: column; }
   .see-all {
     display: inline-block;
