@@ -18,8 +18,8 @@ export const siteConfig = {
     { label: "Om", href: "/om" },
   ],
   social: {
+    facebook: "https://www.facebook.com/profile.php?id=100085614741269",
     instagram: "https://instagram.com/arbetarorkestern",
-    facebook: "https://facebook.com/arbetarorkestern",
   } as Record<string, string>,
   paths: {
     gigs: "/spelningar",
