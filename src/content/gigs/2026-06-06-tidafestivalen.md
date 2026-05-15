@@ -2,7 +2,7 @@
 title: Tidafestivalen 2026
 date: 2026-06-06
 venue: Tidafestivalen
-city: Tida
+city: Bagarmossen
 status: upcoming
 published: true
 ---
