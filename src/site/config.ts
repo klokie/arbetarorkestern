@@ -19,7 +19,6 @@ export const siteConfig = {
   ],
   social: {
     facebook: "https://www.facebook.com/profile.php?id=100085614741269",
-    instagram: "https://instagram.com/arbetarorkestern",
   } as Record<string, string>,
   paths: {
     gigs: "/spelningar",
