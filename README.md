@@ -67,6 +67,10 @@ city: Tida
 ticketUrl: https://...        # optional
 status: upcoming              # upcoming | past | cancelled
 published: true
+image: https://media.arbetarorkestern.klokie.com/posters/2026-06-06-tida.png  # optional
+imageAlt: Tidafestivalen affisch                                              # optional
+imageWidth: 1055                                                              # optional, prevents CLS
+imageHeight: 1491                                                             # optional, prevents CLS
 ```
 
 ```yaml
@@ -87,3 +91,17 @@ published: true
 ```
 
 Set `published: false` to stage a post in repo without showing on site.
+
+## Images
+
+Images are stored in the `aark-media` Cloudflare R2 bucket and served from `media.arbetarorkestern.klokie.com`. The site uses Cloudflare Image Transformations for responsive variants — no Astro `<Image>` pipeline, no images committed to this repo.
+
+Upload an image:
+
+```bash
+node scripts/upload-media.mjs <local-file> [<key>]
+```
+
+The script prints a frontmatter snippet (`image:` / `imageAlt:` / `imageWidth:` / `imageHeight:`) and copies the URL to clipboard. See `PUBLIC/AGENTS.md` in the vault for the full convention.
+
+`src/components/ResponsiveImage.astro` renders any remote URL via `/cdn-cgi/image/width=…,format=auto/…` with a default srcset of `[400, 640, 800, 1200, 1600]`.

@@ -11,6 +11,10 @@ const gigs = defineCollection({
     ticketUrl: z.string().url().optional(),
     status: z.enum(["upcoming", "past", "cancelled"]).default("upcoming"),
     published: z.boolean().default(true),
+    image: z.string().url().optional(),
+    imageAlt: z.string().optional(),
+    imageWidth: z.number().int().positive().optional(),
+    imageHeight: z.number().int().positive().optional(),
   }),
 });
 

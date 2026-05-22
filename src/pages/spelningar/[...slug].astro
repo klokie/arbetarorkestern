@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
+import ResponsiveImage from "@/components/ResponsiveImage.astro";
 import { siteConfig } from "@/site/config";
 
 export async function getStaticPaths() {
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, date, venue, city, ticketUrl, status } = entry.data;
+const { title, date, venue, city, ticketUrl, status, image, imageAlt, imageWidth, imageHeight } = entry.data;
 const dateLabel = date.toLocaleDateString(siteConfig.locale, {
   weekday: "long", day: "numeric", month: "long", year: "numeric",
 });
@@ -35,6 +36,19 @@ const showTickets = ticketUrl && status === "upcoming" && !isPast;
       <p class="cta-row">
         <a class="cta" href={ticketUrl}>→ Biljetter</a>
       </p>
+    )}
+    {image && (
+      <figure class="hero">
+        <ResponsiveImage
+          src={image}
+          alt={imageAlt ?? `${title} – affisch`}
+          width={imageWidth}
+          height={imageHeight}
+          maxWidth={680}
+          fetchpriority="high"
+          loading="eager"
+        />
+      </figure>
     )}
     <div class="prose">
       <Content />
@@ -78,6 +92,16 @@ const showTickets = ticketUrl && status === "upcoming" && !isPast;
     margin-bottom: 16px;
   }
   .cta-row { margin-bottom: 24px; }
+  .hero {
+    margin: 0 0 32px;
+  }
+  .hero :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    border-radius: var(--radius-card, 4px);
+  }
   .cta {
     display: inline-block;
     font-family: var(--font-body);
