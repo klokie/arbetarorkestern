@@ -1,0 +1,135 @@
+---
+import ResponsiveImage from "@/components/ResponsiveImage.astro";
+
+interface Props {
+  title: string;
+  date: string | Date;
+  venue: string;
+  city?: string;
+  ticketUrl?: string;
+  ctaLabel?: string;
+  status?: "upcoming" | "past" | "cancelled";
+  locale?: string;
+  image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+}
+const {
+  title,
+  date,
+  venue,
+  city,
+  ticketUrl,
+  ctaLabel,
+  status = "upcoming",
+  locale = "sv-SE",
+  image,
+  imageAlt,
+  imageWidth,
+  imageHeight,
+} = Astro.props;
+
+const d = typeof date === "string" ? new Date(date) : date;
+const dateLabel = d.toLocaleDateString(locale, {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+const isPast = status === "past" || d.getTime() < Date.now();
+const cta = ctaLabel ?? "Biljetter";
+---
+
+<article class={`gig ${isPast ? "is-past" : ""} status-${status}`}>
+  <div class="gig-body">
+    <div class="gig-date">{dateLabel}</div>
+    <h3 class="gig-title">{title}</h3>
+    <div class="gig-where">
+      <span>{venue}</span>{city && <span class="muted"> · {city}</span>}
+    </div>
+    {status === "cancelled" && <div class="gig-flag">Inställd</div>}
+    {ticketUrl && status === "upcoming" && (
+      <a class="gig-cta" href={ticketUrl}>→ {cta}</a>
+    )}
+  </div>
+  {image && (
+    <aside class="gig-thumb">
+      <ResponsiveImage
+        src={image}
+        alt={imageAlt ?? `${title} – affisch`}
+        width={imageWidth}
+        height={imageHeight}
+        widths={[400]}
+        sizes="96px"
+        loading="lazy"
+      />
+    </aside>
+  )}
+</article>
+
+<style>
+  .gig {
+    border: 1px solid color-mix(in srgb, var(--primary) 13%, transparent);
+    border-radius: var(--radius-card, 4px);
+    padding: 20px 24px;
+    background: var(--bg);
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .gig.is-past { opacity: 0.65; }
+  .gig-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gig-thumb {
+    flex: 0 0 auto;
+    width: 96px;
+  }
+  .gig-thumb :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card, 4px);
+  }
+  .gig-date {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+  }
+  .gig-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .gig-where {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+  }
+  .gig-flag {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 600;
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .gig-cta {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+  }
+</style>

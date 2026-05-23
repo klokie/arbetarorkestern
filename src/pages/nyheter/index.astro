@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import NewsCard from "@klokie/theme/components/NewsCard.astro";
+import NewsCard from "@/components/NewsCard.astro";
 import { siteConfig } from "@/site/config";
 
 const news = (await getCollection("news", ({ data }) => data.published))
@@ -22,6 +22,10 @@ const news = (await getCollection("news", ({ data }) => data.published))
             description={data.description}
             href={`${siteConfig.paths.news}/${id}`}
             locale={siteConfig.locale}
+            image={data.image}
+            imageAlt={data.imageAlt}
+            imageWidth={data.imageWidth}
+            imageHeight={data.imageHeight}
           />
         ))}
       </div>

@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import GigCard from "@klokie/theme/components/GigCard.astro";
-import NewsCard from "@klokie/theme/components/NewsCard.astro";
+import GigCard from "@/components/GigCard.astro";
+import NewsCard from "@/components/NewsCard.astro";
 import Wordmark from "@klokie/theme/components/Wordmark.astro";
 import TextilePattern from "@klokie/theme/components/TextilePattern.astro";
 import { siteConfig } from "@/site/config";
@@ -38,8 +38,13 @@ const allNews = (await getCollection("news", ({ data }) => data.published))
               venue={data.venue}
               city={data.city}
               ticketUrl={data.ticketUrl}
+              ctaLabel={data.ctaLabel}
               status={data.status}
               locale={siteConfig.locale}
+              image={data.image}
+              imageAlt={data.imageAlt}
+              imageWidth={data.imageWidth}
+              imageHeight={data.imageHeight}
             />
           </a>
         ))}
@@ -58,6 +63,10 @@ const allNews = (await getCollection("news", ({ data }) => data.published))
           description={data.description}
           href={`${siteConfig.paths.news}/${id}`}
           locale={siteConfig.locale}
+          image={data.image}
+          imageAlt={data.imageAlt}
+          imageWidth={data.imageWidth}
+          imageHeight={data.imageHeight}
         />
       ))}
     </div>

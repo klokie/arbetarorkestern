@@ -9,6 +9,7 @@ const gigs = defineCollection({
     venue: z.string(),
     city: z.string().optional(),
     ticketUrl: z.string().url().optional(),
+    ctaLabel: z.string().optional(),
     status: z.enum(["upcoming", "past", "cancelled"]).default("upcoming"),
     published: z.boolean().default(true),
     image: z.string().url().optional(),
@@ -24,9 +25,12 @@ const news = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     description: z.string().optional(),
-    cover: z.string().optional(),
     published: z.boolean().default(true),
     tags: z.array(z.string()).optional(),
+    image: z.string().url().optional(),
+    imageAlt: z.string().optional(),
+    imageWidth: z.number().int().positive().optional(),
+    imageHeight: z.number().int().positive().optional(),
   }),
 });
 

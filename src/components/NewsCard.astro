@@ -1,0 +1,111 @@
+---
+import ResponsiveImage from "@/components/ResponsiveImage.astro";
+
+interface Props {
+  title: string;
+  date: string | Date;
+  description?: string;
+  href: string;
+  locale?: string;
+  image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+}
+const {
+  title,
+  date,
+  description,
+  href,
+  locale = "sv-SE",
+  image,
+  imageAlt,
+  imageWidth,
+  imageHeight,
+} = Astro.props;
+const d = typeof date === "string" ? new Date(date) : date;
+const dateLabel = d.toLocaleDateString(locale, {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<article class="news">
+  <div class="news-body">
+    <div class="news-date">{dateLabel}</div>
+    <h3 class="news-title"><a href={href}>{title}</a></h3>
+    {description && <p class="news-desc">{description}</p>}
+    <a class="news-cta" href={href}>→ Läs mer</a>
+  </div>
+  {image && (
+    <aside class="news-thumb">
+      <a href={href} aria-hidden="true" tabindex="-1">
+        <ResponsiveImage
+          src={image}
+          alt={imageAlt ?? ""}
+          width={imageWidth}
+          height={imageHeight}
+          widths={[400]}
+          sizes="96px"
+          loading="lazy"
+        />
+      </a>
+    </aside>
+  )}
+</article>
+
+<style>
+  .news {
+    padding: 20px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 13%, transparent);
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .news-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .news-thumb {
+    flex: 0 0 auto;
+    width: 96px;
+  }
+  .news-thumb :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card, 4px);
+  }
+  .news-date {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .news-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.15;
+  }
+  .news-title a { color: var(--text); }
+  .news-title a:hover { color: var(--primary); text-decoration: none; }
+  .news-desc {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.55;
+    max-width: 60ch;
+  }
+  .news-cta {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+</style>

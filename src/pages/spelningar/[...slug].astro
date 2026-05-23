@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, date, venue, city, ticketUrl, status, image, imageAlt, imageWidth, imageHeight } = entry.data;
+const { title, date, venue, city, ticketUrl, ctaLabel, status, image, imageAlt, imageWidth, imageHeight } = entry.data;
 const dateLabel = date.toLocaleDateString(siteConfig.locale, {
   weekday: "long", day: "numeric", month: "long", year: "numeric",
 });
@@ -34,7 +34,7 @@ const showTickets = ticketUrl && status === "upcoming" && !isPast;
     {status === "cancelled" && <p class="flag">Inställd</p>}
     {showTickets && (
       <p class="cta-row">
-        <a class="cta" href={ticketUrl}>→ Biljetter</a>
+        <a class="cta" href={ticketUrl}>→ {ctaLabel ?? "Biljetter"}</a>
       </p>
     )}
     {image && (

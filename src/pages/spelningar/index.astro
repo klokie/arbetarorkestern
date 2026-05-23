@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import GigCard from "@klokie/theme/components/GigCard.astro";
+import GigCard from "@/components/GigCard.astro";
 import { siteConfig } from "@/site/config";
 
 const all = (await getCollection("gigs", ({ data }) => data.published))
@@ -28,6 +28,10 @@ const past = all.filter((g) => g.data.date.getTime() < now || g.data.status === 
               city={data.city}
               status={data.status}
               locale={siteConfig.locale}
+              image={data.image}
+              imageAlt={data.imageAlt}
+              imageWidth={data.imageWidth}
+              imageHeight={data.imageHeight}
             />
           </a>
         ))}
@@ -47,6 +51,10 @@ const past = all.filter((g) => g.data.date.getTime() < now || g.data.status === 
                 city={data.city}
                 status="past"
                 locale={siteConfig.locale}
+                image={data.image}
+                imageAlt={data.imageAlt}
+                imageWidth={data.imageWidth}
+                imageHeight={data.imageHeight}
               />
             </a>
           ))}
