@@ -94,14 +94,14 @@ Set `published: false` to stage a post in repo without showing on site.
 
 ## Images
 
-Images are stored in the `aark-media` Cloudflare R2 bucket and served from `media.arbetarorkestern.klokie.com`. The site uses Cloudflare Image Transformations for responsive variants — no Astro `<Image>` pipeline, no images committed to this repo.
+Images live in the `aark-media` Cloudflare R2 bucket and are served from `media.arbetarorkestern.klokie.com`. No Astro `<Image>` pipeline, no images committed to this repo.
 
 Upload an image:
 
 ```bash
-node scripts/upload-media.mjs <local-file> [<key>]
+CLOUDFLARE_ACCOUNT_ID=<klokie-account-id> node scripts/upload-media.mjs <local-file> [<key>]
 ```
 
-The script prints a frontmatter snippet (`image:` / `imageAlt:` / `imageWidth:` / `imageHeight:`) and copies the URL to clipboard. See `PUBLIC/AGENTS.md` in the vault for the full convention.
+The script uses `sharp` to pre-generate webp + avif variants at widths `400, 640, 800, 1200, 1600` (skipping widths larger than the original), uploads them alongside the original via `wrangler r2 object put --remote`, and prints a frontmatter snippet (`image:` / `imageAlt:` / `imageWidth:` / `imageHeight:`) with the public URL copied to clipboard.
 
-`src/components/ResponsiveImage.astro` renders any remote URL via `/cdn-cgi/image/width=…,format=auto/…` with a default srcset of `[400, 640, 800, 1200, 1600]`.
+`src/components/ResponsiveImage.astro` derives variant URLs from the original by inserting `-<width>w` before the extension and swapping the extension, so frontmatter only stores the original URL. The rendered `<picture>` element prefers avif → webp → original.

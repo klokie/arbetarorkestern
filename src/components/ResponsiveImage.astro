@@ -1,9 +1,8 @@
 ---
-// Renders a remote image (typically from media.arbetarorkestern.klokie.com)
-// via Cloudflare Image Transformations for responsive variants.
-//
-// The /cdn-cgi/image/<opts>/<src> path is served by Cloudflare on the current
-// zone (klokie.com). Source URL must be publicly fetchable.
+// Renders a remote image stored in R2 alongside pre-generated webp + avif
+// variants. Variant URLs are derived from `src` by inserting -<width>w
+// before the extension and swapping the extension. See scripts/upload-media.mjs
+// for the matching upload side.
 
 interface Props {
   src: string;
@@ -13,7 +12,6 @@ interface Props {
   maxWidth?: number;
   sizes?: string;
   widths?: number[];
-  quality?: number;
   loading?: "lazy" | "eager";
   fetchpriority?: "high" | "low" | "auto";
   class?: string;
@@ -27,28 +25,31 @@ const {
   maxWidth = 1200,
   sizes = `(max-width: 720px) 100vw, ${maxWidth}px`,
   widths = [400, 640, 800, 1200, 1600],
-  quality = 85,
   loading = "lazy",
   fetchpriority,
   class: className,
 } = Astro.props;
 
-const cf = (w: number) =>
-  `/cdn-cgi/image/width=${w},quality=${quality},format=auto,fit=scale-down/${src}`;
+const match = /^(.*)\.([^./]+)$/.exec(src);
+if (!match) throw new Error(`ResponsiveImage src has no file extension: ${src}`);
+const stem = match[1];
 
-const srcset = widths.map((w) => `${cf(w)} ${w}w`).join(", ");
-const fallback = cf(Math.min(maxWidth, Math.max(...widths)));
+const variantUrl = (w: number, ext: "avif" | "webp") => `${stem}-${w}w.${ext}`;
+const srcset = (ext: "avif" | "webp") =>
+  widths.map((w) => `${variantUrl(w, ext)} ${w}w`).join(", ");
 ---
 
-<img
-  src={fallback}
-  srcset={srcset}
-  sizes={sizes}
-  alt={alt}
-  width={width}
-  height={height}
-  loading={loading}
-  fetchpriority={fetchpriority}
-  decoding="async"
-  class={className}
-/>
+<picture>
+  <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
+  <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+    class={className}
+  />
+</picture>
