@@ -34,9 +34,16 @@ const match = /^(.*)\.([^./]+)$/.exec(src);
 if (!match) throw new Error(`ResponsiveImage src has no file extension: ${src}`);
 const stem = match[1];
 
+// Match the script's rule: variants exist at every standard width below the
+// intrinsic width, plus one at the intrinsic width itself. If `width` isn't
+// known we emit all standard widths and trust the upload covers them.
+const effectiveWidths = width
+  ? Array.from(new Set([...widths.filter((w) => w < width), width])).sort((a, b) => a - b)
+  : widths;
+
 const variantUrl = (w: number, ext: "avif" | "webp") => `${stem}-${w}w.${ext}`;
 const srcset = (ext: "avif" | "webp") =>
-  widths.map((w) => `${variantUrl(w, ext)} ${w}w`).join(", ");
+  effectiveWidths.map((w) => `${variantUrl(w, ext)} ${w}w`).join(", ");
 ---
 
 <picture>

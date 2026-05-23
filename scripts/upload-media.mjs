@@ -75,8 +75,11 @@ if (!meta.width || !meta.height) {
   process.exit(1);
 }
 
-const targets = WIDTHS.filter((w) => w < meta.width);
-if (targets.length === 0) targets.push(meta.width);
+// Emit a variant at every standard width below the original, plus one at
+// the original width itself — so the largest srcset entry is always an
+// avif/webp instead of forcing the browser to fall back to the (much
+// larger) original PNG/JPG. ResponsiveImage.astro must use the same rule.
+const targets = [...new Set([...WIDTHS.filter((w) => w < meta.width), meta.width])];
 
 console.log(
   `Source: ${file} (${sizeKb} KB, ${meta.width}×${meta.height}, ${meta.format})`,
