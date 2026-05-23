@@ -67,6 +67,10 @@ city: Tida
 ticketUrl: https://...        # optional
 status: upcoming              # upcoming | past | cancelled
 published: true
+image: https://media.arbetarorkestern.klokie.com/posters/2026-06-06-tida.png  # optional
+imageAlt: Tidafestivalen affisch                                              # optional
+imageWidth: 1055                                                              # optional, prevents CLS
+imageHeight: 1491                                                             # optional, prevents CLS
 ```
 
 ```yaml
@@ -87,3 +91,17 @@ published: true
 ```
 
 Set `published: false` to stage a post in repo without showing on site.
+
+## Images
+
+Images live in the `aark-media` Cloudflare R2 bucket and are served from `media.arbetarorkestern.klokie.com`. No Astro `<Image>` pipeline, no images committed to this repo.
+
+Upload an image:
+
+```bash
+CLOUDFLARE_ACCOUNT_ID=<klokie-account-id> node scripts/upload-media.mjs <local-file> [<key>]
+```
+
+The script uses `sharp` to pre-generate webp + avif variants at widths `400, 640, 800, 1200, 1600` (skipping widths larger than the original), uploads them alongside the original via `wrangler r2 object put --remote`, and prints a frontmatter snippet (`image:` / `imageAlt:` / `imageWidth:` / `imageHeight:`) with the public URL copied to clipboard.
+
+`src/components/ResponsiveImage.astro` derives variant URLs from the original by inserting `-<width>w` before the extension and swapping the extension, so frontmatter only stores the original URL. The rendered `<picture>` element prefers avif → webp → original.

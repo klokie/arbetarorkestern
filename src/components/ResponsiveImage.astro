@@ -1,0 +1,55 @@
+---
+// Renders a remote image stored in R2 alongside pre-generated webp + avif
+// variants. Variant URLs are derived from `src` by inserting -<width>w
+// before the extension and swapping the extension. See scripts/upload-media.mjs
+// for the matching upload side.
+
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  maxWidth?: number;
+  sizes?: string;
+  widths?: number[];
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low" | "auto";
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  maxWidth = 1200,
+  sizes = `(max-width: 720px) 100vw, ${maxWidth}px`,
+  widths = [400, 640, 800, 1200, 1600],
+  loading = "lazy",
+  fetchpriority,
+  class: className,
+} = Astro.props;
+
+const match = /^(.*)\.([^./]+)$/.exec(src);
+if (!match) throw new Error(`ResponsiveImage src has no file extension: ${src}`);
+const stem = match[1];
+
+const variantUrl = (w: number, ext: "avif" | "webp") => `${stem}-${w}w.${ext}`;
+const srcset = (ext: "avif" | "webp") =>
+  widths.map((w) => `${variantUrl(w, ext)} ${w}w`).join(", ");
+---
+
+<picture>
+  <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
+  <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+    class={className}
+  />
+</picture>
