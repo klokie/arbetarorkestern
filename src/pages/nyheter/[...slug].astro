@@ -13,12 +13,43 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const dateLabel = entry.data.date.toLocaleDateString(siteConfig.locale, {
+const { title, date, description, image, imageAlt, imageWidth, imageHeight } = entry.data;
+const dateLabel = date.toLocaleDateString(siteConfig.locale, {
   day: "numeric", month: "long", year: "numeric",
 });
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  headline: title,
+  datePublished: date.toISOString(),
+  dateModified: date.toISOString(),
+  ...(description && { description }),
+  ...(image && { image }),
+  url: pageUrl,
+  author: {
+    "@type": "MusicGroup",
+    name: siteConfig.title,
+  },
+  publisher: {
+    "@type": "MusicGroup",
+    name: siteConfig.title,
+    url: Astro.site?.href ?? siteConfig.url,
+  },
+};
 ---
 
-<SiteLayout title={entry.data.title} description={entry.data.description}>
+<SiteLayout
+  title={title}
+  description={description}
+  ogType="article"
+  ogImage={image}
+  ogImageAlt={imageAlt}
+  ogImageWidth={imageWidth}
+  ogImageHeight={imageHeight}
+  jsonLd={jsonLd}
+>
   <article class="container">
     <div class="meta">
       <time datetime={entry.data.date.toISOString()}>{dateLabel}</time>

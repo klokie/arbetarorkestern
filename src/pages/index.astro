@@ -16,9 +16,25 @@ const upcomingGigs = allGigs.filter(
 const allNews = (await getCollection("news", ({ data }) => data.published))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
+
+const siteUrl = Astro.site?.href ?? siteConfig.url;
+const sameAs = [
+  ...Object.values(siteConfig.social),
+  "https://www.youtube.com/@Arbetarorkestern-j1d",
+].filter(Boolean);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MusicGroup",
+  name: siteConfig.title,
+  description: siteConfig.description,
+  url: siteUrl,
+  genre: ["World music", "Världsmusik"],
+  ...(sameAs.length && { sameAs }),
+};
 ---
 
-<SiteLayout>
+<SiteLayout jsonLd={jsonLd}>
   <section class="hero container">
     <Wordmark name={siteConfig.title} tagline={siteConfig.tagline} fontSize={56} />
     <TextilePattern width={520} height={36} />

@@ -20,9 +20,58 @@ const dateLabel = date.toLocaleDateString(siteConfig.locale, {
 });
 const isPast = status === "past" || date.getTime() < Date.now();
 const showTickets = ticketUrl && status === "upcoming" && !isPast;
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MusicEvent",
+  name: title,
+  startDate: date.toISOString(),
+  eventStatus:
+    status === "cancelled"
+      ? "https://schema.org/EventCancelled"
+      : isPast
+        ? "https://schema.org/EventScheduled"
+        : "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  location: {
+    "@type": "Place",
+    name: venue,
+    ...(city && {
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: city,
+        addressCountry: "SE",
+      },
+    }),
+  },
+  performer: {
+    "@type": "MusicGroup",
+    name: siteConfig.title,
+    url: Astro.site?.href ?? siteConfig.url,
+  },
+  ...(image && { image }),
+  url: pageUrl,
+  ...(showTickets && {
+    offers: {
+      "@type": "Offer",
+      url: ticketUrl,
+      availability: "https://schema.org/InStock",
+    },
+  }),
+};
 ---
 
-<SiteLayout title={title} description={`${venue}${city ? " · " + city : ""}`}>
+<SiteLayout
+  title={title}
+  description={`${venue}${city ? " · " + city : ""}`}
+  ogType="event"
+  ogImage={image}
+  ogImageAlt={imageAlt}
+  ogImageWidth={imageWidth}
+  ogImageHeight={imageHeight}
+  jsonLd={jsonLd}
+>
   <article class="container">
     <div class="meta">
       <time datetime={date.toISOString()}>{dateLabel}</time>
