@@ -37,6 +37,10 @@ const jsonLd = {
 <SiteLayout jsonLd={jsonLd}>
   <section class="hero container">
     <Wordmark name={siteConfig.title} tagline={siteConfig.tagline} fontSize={56} />
+    <p class="bio">
+      En kollektiv världsmusikensemble — svensk progg, västafrikanska grooves, sydafrikansk körsång och roots reggae delar samma scen.
+      <a class="bio-link" href="/om/">→ Mer om oss</a>
+    </p>
     <TextilePattern width={520} height={36} />
   </section>
 
@@ -96,6 +100,22 @@ const jsonLd = {
     display: flex;
     flex-direction: column;
     gap: 32px;
+  }
+  .bio {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text);
+    max-width: 56ch;
+    margin: -8px 0 0;
+  }
+  .bio-link {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    margin-left: 8px;
   }
   .container {
     max-width: 720px;

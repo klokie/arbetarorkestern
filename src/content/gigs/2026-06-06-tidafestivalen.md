@@ -11,4 +11,4 @@ imageWidth: 1055
 imageHeight: 1491
 ---
 
-Arbetarorkestern spelar på Tidafestivalen — afrikansk sång, svensk visa, reggae och kirtan i samklang.
+Arbetarorkestern spelar på Tidafestivalen — bjuder på progg på flera sätt, afrikansk sång, svensk visa, reggae mm i samklang.
