@@ -1,0 +1,146 @@
+---
+interface NavItem { label: string; href: string; }
+interface Props {
+  title: string;
+  tagline?: string;
+  monogram?: string;
+  nav?: NavItem[];
+}
+const { title, tagline, nav = [] } = Astro.props;
+---
+
+<header class="masthead">
+  <div class="masthead-stage">
+    <div class="masthead-frame">
+      <a class="masthead-home" href="/" aria-label={title}></a>
+    </div>
+    <a class="masthead-text" href="/">
+      <span class="masthead-text-title">{title}</span>
+      {tagline && <span class="masthead-text-tagline">{tagline}</span>}
+    </a>
+    {nav.length > 0 && (
+      <nav class="masthead-nav" aria-label="Primary">
+        <ul>
+          {nav.map(({ label, href }) => (
+            <li><a href={href}>{label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </div>
+  {tagline && <p class="masthead-tagline">{tagline}</p>}
+</header>
+
+<style>
+  .masthead {
+    padding: 16px 16px 0;
+  }
+  .masthead-stage {
+    position: relative;
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .masthead-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1662 / 1210;
+    background-image: url("/banner.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top center;
+  }
+  .masthead-home {
+    position: absolute;
+    inset: 0 8% 50% 8%;
+    border-radius: 6px;
+  }
+  .masthead-home:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+  /* Text fallback for tiny screens — hidden by default */
+  .masthead-text {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text);
+    padding: 8px 0 4px;
+  }
+  .masthead-text:hover { text-decoration: none; }
+  .masthead-text-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1.1;
+    color: var(--secondary);
+    letter-spacing: 0.01em;
+  }
+  .masthead-text-tagline {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .masthead-nav {
+    position: absolute;
+    left: 22%;
+    right: 22%;
+    bottom: 14%;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .masthead-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(14px, 3vw, 32px);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .masthead-nav a {
+    font-family: var(--font-body);
+    font-size: clamp(11px, 1.3vw, 13px);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    color: var(--secondary);
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+  .masthead-nav a:hover {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  .masthead-tagline {
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    margin: 4px 0 20px;
+  }
+
+  /* Medium widths: drop nav under the banner so it doesn't crowd the flourishes. */
+  @media (max-width: 720px) {
+    .masthead-nav {
+      position: static;
+      margin: 10px auto 0;
+      left: auto;
+      right: auto;
+    }
+    .masthead-nav a { font-size: 12px; }
+  }
+
+  /* Tiny screens: hide the ornate wordmark and the duplicate tagline,
+     fall back to plain text title — same as the previous header design. */
+  @media (max-width: 480px) {
+    .masthead-frame { display: none; }
+    .masthead-text { display: flex; }
+    .masthead-tagline { display: none; }
+  }
+</style>
