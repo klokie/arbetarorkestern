@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import GigCard from "@/components/GigCard.astro";
 import NewsCard from "@/components/NewsCard.astro";
-import Wordmark from "@klokie/theme/components/Wordmark.astro";
 import TextilePattern from "@klokie/theme/components/TextilePattern.astro";
 import { siteConfig } from "@/site/config";
 
@@ -36,7 +35,6 @@ const jsonLd = {
 
 <SiteLayout jsonLd={jsonLd}>
   <section class="hero container">
-    <Wordmark name={siteConfig.title} tagline={siteConfig.tagline} fontSize={56} />
     <p class="bio">
       En kollektiv världsmusikensemble — svensk progg, västafrikanska grooves, sydafrikansk körsång och roots reggae delar samma scen.
       <a class="bio-link" href="/om/">→ Mer om oss</a>
