@@ -1,0 +1,167 @@
+---
+import { getCollection } from "astro:content";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import GigCard from "@/components/GigCard.astro";
+import NewsCard from "@/components/NewsCard.astro";
+import Wordmark from "@klokie/theme/components/Wordmark.astro";
+import TextilePattern from "@klokie/theme/components/TextilePattern.astro";
+import { siteConfig } from "@/site/config";
+import { t } from "@/i18n/ui";
+import { dateLocale, localizeUrl, localizedEntries, type Locale } from "@/i18n";
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+
+const allGigs = localizedEntries(
+  await getCollection("gigs", ({ data }) => data.published),
+  lang,
+).sort((a, b) => a.entry.data.date.getTime() - b.entry.data.date.getTime());
+const now = Date.now();
+const upcomingGigs = allGigs.filter(
+  ({ entry }) => entry.data.date.getTime() >= now && entry.data.status !== "past",
+);
+const recentNews = localizedEntries(
+  await getCollection("news", ({ data }) => data.published),
+  lang,
+)
+  .sort((a, b) => b.entry.data.date.getTime() - a.entry.data.date.getTime())
+  .slice(0, 3);
+
+const siteUrl = Astro.site?.href ?? siteConfig.url;
+const sameAs = [
+  ...Object.values(siteConfig.social),
+  "https://www.youtube.com/@Arbetarorkestern-j1d",
+].filter(Boolean);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MusicGroup",
+  name: siteConfig.title,
+  description: t(lang, "site.description"),
+  url: siteUrl,
+  genre: ["World music", "Världsmusik"],
+  ...(sameAs.length && { sameAs }),
+};
+---
+
+<SiteLayout lang={lang} jsonLd={jsonLd}>
+  <section class="hero container">
+    <Wordmark name={siteConfig.title} tagline={t(lang, "site.tagline")} fontSize={56} />
+    <p class="bio">
+      {t(lang, "home.bio")}
+      <a class="bio-link" href={localizeUrl(siteConfig.paths.about, lang)}>{t(lang, "home.aboutLink")}</a>
+    </p>
+    <TextilePattern width={520} height={36} />
+  </section>
+
+  <section class="container">
+    <h2 class="section-heading">{t(lang, "home.upcoming")}</h2>
+    {upcomingGigs.length === 0 ? (
+      <p class="muted">{t(lang, "home.upcomingEmpty")}</p>
+    ) : (
+      <div class="gig-list">
+        {upcomingGigs.map(({ slug, entry }) => (
+          <a class="card-link" href={localizeUrl(`${siteConfig.paths.gigs}/${slug}`, lang)}>
+            <GigCard
+              title={entry.data.title}
+              date={entry.data.date}
+              venue={entry.data.venue}
+              city={entry.data.city}
+              ticketUrl={entry.data.ticketUrl}
+              ctaLabel={entry.data.ctaLabel ?? t(lang, "gig.tickets")}
+              status={entry.data.status}
+              locale={dateLocale[lang]}
+              image={entry.data.image}
+              imageAlt={entry.data.imageAlt}
+              imageWidth={entry.data.imageWidth}
+              imageHeight={entry.data.imageHeight}
+            />
+          </a>
+        ))}
+      </div>
+    )}
+    <a class="see-all" href={localizeUrl(siteConfig.paths.gigs, lang)}>{t(lang, "home.allGigs")}</a>
+  </section>
+
+  <section class="container">
+    <h2 class="section-heading">{t(lang, "home.news")}</h2>
+    <div class="news-list">
+      {recentNews.map(({ slug, entry }) => (
+        <NewsCard
+          title={entry.data.title}
+          date={entry.data.date}
+          description={entry.data.description}
+          href={localizeUrl(`${siteConfig.paths.news}/${slug}`, lang)}
+          locale={dateLocale[lang]}
+          image={entry.data.image}
+          imageAlt={entry.data.imageAlt}
+          imageWidth={entry.data.imageWidth}
+          imageHeight={entry.data.imageHeight}
+        />
+      ))}
+    </div>
+    <a class="see-all" href={localizeUrl(siteConfig.paths.news, lang)}>{t(lang, "home.allNews")}</a>
+  </section>
+</SiteLayout>
+
+<style>
+  .hero {
+    padding: 64px 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .bio {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text);
+    max-width: 56ch;
+    margin: -8px 0 0;
+  }
+  .bio-link {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    margin-left: 8px;
+  }
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+  .section-heading {
+    font-family: var(--font-display);
+    font-size: 28px;
+    margin-bottom: 16px;
+    letter-spacing: 0.01em;
+  }
+  .gig-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 600px) {
+    .gig-list { grid-template-columns: 1fr 1fr; }
+  }
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 120ms ease;
+  }
+  .card-link:hover { transform: translateY(-2px); }
+  .news-list { display: flex; flex-direction: column; }
+  .see-all {
+    display: inline-block;
+    margin-top: 16px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+  }
+</style>

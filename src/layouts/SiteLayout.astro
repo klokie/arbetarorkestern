@@ -2,10 +2,14 @@
 import BaseLayout from "@klokie/theme/layouts/BaseLayout.astro";
 import SiteHeader from "@klokie/theme/components/SiteHeader.astro";
 import SiteFooter from "@klokie/theme/components/SiteFooter.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import "@klokie/theme/tokens/jordsang.css";
 import { siteConfig } from "@/site/config";
+import { t } from "@/i18n/ui";
+import { locales, defaultLocale, localizeUrl, localePaths, type Locale } from "@/i18n";
 
 interface Props {
+  lang?: Locale;
   title?: string;
   description?: string;
   ogImage?: string;
@@ -18,6 +22,7 @@ interface Props {
   canonicalUrl?: string;
 }
 const {
+  lang = defaultLocale,
   title,
   description,
   ogImage,
@@ -29,19 +34,36 @@ const {
   noindex = false,
   canonicalUrl,
 } = Astro.props;
+
+const tagline = t(lang, "site.tagline");
 const fullTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
-const fullDescription = description ?? siteConfig.description;
-const canonical = canonicalUrl ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
-const ogLocale = siteConfig.locale.replace("-", "_");
+const fullDescription = description ?? t(lang, "site.description");
+
+const origin = Astro.site ?? Astro.url.origin;
+const abs = (p: string) => new URL(p, origin).href;
+const paths = localePaths(Astro.url.pathname);
+const canonical = canonicalUrl ?? abs(Astro.url.pathname);
+
+const ogLocaleMap: Record<Locale, string> = { sv: "sv_SE", en: "en_US" };
+const ogLocale = ogLocaleMap[lang];
+const ogLocaleAlternates = locales.filter((l) => l !== lang).map((l) => ogLocaleMap[l]);
+
+// Localized primary nav (the language switcher is rendered separately, in the
+// header's nav-end slot).
+const navItems = siteConfig.nav.map((item) => ({
+  label: t(lang, item.key),
+  href: localizeUrl(item.path, lang),
+}));
+
 // Pages without their own poster (home, listings, about) fall back to the
 // site-wide branded card so link previews always have an image.
 const usingDefaultOg = !ogImage;
-const ogOrigin = Astro.site ?? Astro.url.origin;
-const resolvedOgImage = ogImage ?? new URL("/og-default.png", ogOrigin).href;
+const resolvedOgImage = ogImage ?? abs("/og-default.png");
 const resolvedOgImageAlt =
-  ogImageAlt ?? (usingDefaultOg ? `${siteConfig.title} – ${siteConfig.tagline}` : undefined);
+  ogImageAlt ?? (usingDefaultOg ? `${siteConfig.title} – ${tagline}` : undefined);
 const resolvedOgImageWidth = usingDefaultOg ? 1200 : ogImageWidth;
 const resolvedOgImageHeight = usingDefaultOg ? 630 : ogImageHeight;
+
 const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 // Escape `</script>` and other unsafe sequences in JSON-LD to prevent
 // breaking out of the <script> tag.
@@ -57,12 +79,20 @@ const serializeJsonLd = (obj: object) =>
   description={fullDescription}
   preset={siteConfig.preset}
   ogImage={resolvedOgImage}
+  lang={lang}
 >
   <Fragment slot="head">
     <link rel="canonical" href={canonical} />
+    {locales.map((l) => (
+      <link rel="alternate" hreflang={l} href={abs(paths[l])} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={abs(paths[defaultLocale])} />
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={siteConfig.title} />
     <meta property="og:locale" content={ogLocale} />
+    {ogLocaleAlternates.map((l) => (
+      <meta property="og:locale:alternate" content={l} />
+    ))}
     <meta property="og:url" content={canonical} />
     {resolvedOgImageAlt && <meta property="og:image:alt" content={resolvedOgImageAlt} />}
     {resolvedOgImageWidth && <meta property="og:image:width" content={String(resolvedOgImageWidth)} />}
@@ -79,10 +109,13 @@ const serializeJsonLd = (obj: object) =>
   </Fragment>
   <SiteHeader
     title={siteConfig.title}
-    tagline={siteConfig.tagline}
+    tagline={tagline}
     monogram={siteConfig.monogram}
-    nav={siteConfig.nav}
-  />
+    nav={navItems}
+    homeHref={localizeUrl("/", lang)}
+  >
+    <LanguageSwitcher slot="nav-end" lang={lang} pathname={Astro.url.pathname} />
+  </SiteHeader>
   <main>
     <slot />
   </main>

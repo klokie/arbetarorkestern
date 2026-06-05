@@ -1,0 +1,54 @@
+---
+import { getCollection } from "astro:content";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import NewsCard from "@/components/NewsCard.astro";
+import { siteConfig } from "@/site/config";
+import { t } from "@/i18n/ui";
+import { dateLocale, localizeUrl, localizedEntries, type Locale } from "@/i18n";
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+
+const news = localizedEntries(
+  await getCollection("news", ({ data }) => data.published),
+  lang,
+).sort((a, b) => b.entry.data.date.getTime() - a.entry.data.date.getTime());
+---
+
+<SiteLayout lang={lang} title={t(lang, "news.title")} description={t(lang, "news.metaDesc")}>
+  <section class="container">
+    <h1>{t(lang, "news.title")}</h1>
+    {news.length === 0 ? (
+      <p class="muted">{t(lang, "news.empty")}</p>
+    ) : (
+      <div class="list">
+        {news.map(({ slug, entry }) => (
+          <NewsCard
+            title={entry.data.title}
+            date={entry.data.date}
+            description={entry.data.description}
+            href={localizeUrl(`${siteConfig.paths.news}/${slug}`, lang)}
+            locale={dateLocale[lang]}
+            image={entry.data.image}
+            imageAlt={entry.data.imageAlt}
+            imageWidth={entry.data.imageWidth}
+            imageHeight={entry.data.imageHeight}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+</SiteLayout>
+
+<style>
+  .container { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+  h1 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    letter-spacing: 0.01em;
+    margin-bottom: 24px;
+  }
+  .list { display: flex; flex-direction: column; }
+</style>

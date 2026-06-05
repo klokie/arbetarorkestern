@@ -1,21 +1,21 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { siteConfig } from "@/site/config";
+import { dateLocale, type Locale } from "@/i18n";
 
-export async function getStaticPaths() {
-  const items = await getCollection("news", ({ data }) => data.published);
-  return items.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+interface Props {
+  lang: Locale;
+  entry: CollectionEntry<"news">;
 }
-
-const { entry } = Astro.props;
+const { lang, entry } = Astro.props;
 const { Content } = await render(entry);
 const { title, date, description, image, imageAlt, imageWidth, imageHeight } = entry.data;
-const dateLabel = date.toLocaleDateString(siteConfig.locale, {
-  day: "numeric", month: "long", year: "numeric",
+const dateLabel = date.toLocaleDateString(dateLocale[lang], {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
 });
 const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
 
@@ -41,6 +41,7 @@ const jsonLd = {
 ---
 
 <SiteLayout
+  lang={lang}
   title={title}
   description={description}
   ogType="article"
@@ -52,10 +53,10 @@ const jsonLd = {
 >
   <article class="container">
     <div class="meta">
-      <time datetime={entry.data.date.toISOString()}>{dateLabel}</time>
+      <time datetime={date.toISOString()}>{dateLabel}</time>
     </div>
-    <h1>{entry.data.title}</h1>
-    {entry.data.description && <p class="lede">{entry.data.description}</p>}
+    <h1>{title}</h1>
+    {description && <p class="lede">{description}</p>}
     <div class="prose">
       <Content />
     </div>

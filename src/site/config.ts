@@ -11,12 +11,14 @@ export const siteConfig = {
   copyrightName: "Arbetarorkestern",
   locale: "sv-SE",
   preset: jordsang as ThemePreset,
+  // Nav items reference a UI dictionary key + a default-locale path; SiteLayout
+  // localizes both per request.
   nav: [
-    { label: "Spelningar", href: "/spelningar" },
-    { label: "Media", href: "/media" },
-    { label: "Nyheter", href: "/nyheter" },
-    { label: "Om", href: "/om" },
-  ],
+    { key: "nav.gigs", path: "/spelningar" },
+    { key: "nav.media", path: "/media" },
+    { key: "nav.news", path: "/nyheter" },
+    { key: "nav.about", path: "/om" },
+  ] as const,
   social: {
     facebook: "https://www.facebook.com/profile.php?id=100085614741269",
   } as Record<string, string>,
@@ -24,6 +26,7 @@ export const siteConfig = {
     gigs: "/spelningar",
     news: "/nyheter",
     media: "/media",
+    about: "/om",
   },
 };
 

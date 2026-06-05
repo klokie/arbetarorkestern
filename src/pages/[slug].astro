@@ -1,0 +1,16 @@
+---
+import { getCollection } from "astro:content";
+import MarkdownPageView from "@/components/views/MarkdownPageView.astro";
+import { localizedEntries } from "@/i18n";
+
+export async function getStaticPaths() {
+  const all = await getCollection("pages", ({ data }) => data.published);
+  return localizedEntries(all, "sv").map(({ slug, entry }) => ({
+    params: { slug },
+    props: { entry },
+  }));
+}
+const { entry } = Astro.props;
+---
+
+<MarkdownPageView lang="sv" entry={entry} />

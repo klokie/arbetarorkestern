@@ -1,0 +1,15 @@
+---
+import { getCollection } from "astro:content";
+import MediaItemView from "@/components/views/MediaItemView.astro";
+
+export async function getStaticPaths() {
+  const items = await getCollection("videos", ({ data }) => data.published);
+  return items.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+const { entry } = Astro.props;
+---
+
+<MediaItemView lang="sv" entry={entry} />

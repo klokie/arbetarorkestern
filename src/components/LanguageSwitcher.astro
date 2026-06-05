@@ -1,0 +1,71 @@
+---
+import { locales, localeName, localePaths, type Locale } from "@/i18n";
+
+interface Props {
+  lang: Locale;
+  pathname: string;
+}
+const { lang, pathname } = Astro.props;
+const paths = localePaths(pathname);
+---
+
+<div class="lang-switch">
+  <span class="dots" aria-hidden="true">
+    <span class="dot" style="background: var(--primary)"></span>
+    <span class="dot" style="background: var(--accent)"></span>
+    <span class="dot" style="background: var(--secondary)"></span>
+  </span>
+  <ul>
+    {
+      locales.map((l) =>
+        l === lang ? (
+          <li><span class="current" aria-current="true">{localeName[l]}</span></li>
+        ) : (
+          <li><a href={paths[l]}>{localeName[l]}</a></li>
+        ),
+      )
+    }
+  </ul>
+</div>
+
+<style>
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .lang-switch ul {
+    display: flex;
+    gap: 14px;
+    list-style: none;
+  }
+  .lang-switch a,
+  .lang-switch .current {
+    font-family: var(--font-body);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 500;
+  }
+  .lang-switch a {
+    color: var(--muted);
+  }
+  .lang-switch a:hover {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  .lang-switch .current {
+    color: var(--text);
+    font-weight: 600;
+    cursor: default;
+  }
+</style>

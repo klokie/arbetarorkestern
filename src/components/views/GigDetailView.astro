@@ -1,22 +1,25 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import ResponsiveImage from "@/components/ResponsiveImage.astro";
 import { siteConfig } from "@/site/config";
+import { t } from "@/i18n/ui";
+import { dateLocale, localizeUrl, type Locale } from "@/i18n";
 
-export async function getStaticPaths() {
-  const items = await getCollection("gigs", ({ data }) => data.published);
-  return items.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+interface Props {
+  lang: Locale;
+  entry: CollectionEntry<"gigs">;
 }
-
-const { entry } = Astro.props;
+const { lang, entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, date, venue, city, ticketUrl, ctaLabel, status, image, imageAlt, imageWidth, imageHeight } = entry.data;
-const dateLabel = date.toLocaleDateString(siteConfig.locale, {
-  weekday: "long", day: "numeric", month: "long", year: "numeric",
+const { title, date, venue, city, ticketUrl, ctaLabel, status, image, imageAlt, imageWidth, imageHeight } =
+  entry.data;
+const dateLabel = date.toLocaleDateString(dateLocale[lang], {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
 });
 const isPast = status === "past" || date.getTime() < Date.now();
 const showTickets = ticketUrl && status === "upcoming" && !isPast;
@@ -28,11 +31,7 @@ const jsonLd = {
   name: title,
   startDate: date.toISOString(),
   eventStatus:
-    status === "cancelled"
-      ? "https://schema.org/EventCancelled"
-      : isPast
-        ? "https://schema.org/EventScheduled"
-        : "https://schema.org/EventScheduled",
+    status === "cancelled" ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
   eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
   location: {
     "@type": "Place",
@@ -63,6 +62,7 @@ const jsonLd = {
 ---
 
 <SiteLayout
+  lang={lang}
   title={title}
   description={`${venue}${city ? " · " + city : ""}`}
   ogType="event"
@@ -80,17 +80,17 @@ const jsonLd = {
     <p class="where">
       <span>{venue}</span>{city && <span class="muted"> · {city}</span>}
     </p>
-    {status === "cancelled" && <p class="flag">Inställd</p>}
+    {status === "cancelled" && <p class="flag">{t(lang, "gig.cancelled")}</p>}
     {showTickets && (
       <p class="cta-row">
-        <a class="cta" href={ticketUrl}>→ {ctaLabel ?? "Biljetter"}</a>
+        <a class="cta" href={ticketUrl}>→ {ctaLabel ?? t(lang, "gig.tickets")}</a>
       </p>
     )}
     {image && (
       <figure class="hero">
         <ResponsiveImage
           src={image}
-          alt={imageAlt ?? `${title} – affisch`}
+          alt={imageAlt ?? `${title} – ${t(lang, "gig.posterAlt")}`}
           width={imageWidth}
           height={imageHeight}
           maxWidth={680}
@@ -102,7 +102,7 @@ const jsonLd = {
     <div class="prose">
       <Content />
     </div>
-    <p class="back"><a href={siteConfig.paths.gigs}>← Alla spelningar</a></p>
+    <p class="back"><a href={localizeUrl(siteConfig.paths.gigs, lang)}>{t(lang, "gig.back")}</a></p>
   </article>
 </SiteLayout>
 
