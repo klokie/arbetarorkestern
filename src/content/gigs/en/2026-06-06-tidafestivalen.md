@@ -3,7 +3,7 @@ title: Tidafestivalen 2026
 date: 2026-06-06
 venue: Tidafestivalen
 city: Bagarmossen
-status: upcoming
+status: past
 published: true
 image: https://media.arbetarorkestern.klokie.com/posters/2026-06-06-tidafestivalen.png
 imageAlt: Tidafestivalen 2026 poster in art nouveau style — a fantasy landscape with a winding river, floating islands, and a stylized sun in orange and blue. The text reads "Arbetarorkestern · Tidafestivalen 6 June".
