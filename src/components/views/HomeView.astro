@@ -63,9 +63,10 @@ const jsonLd = {
     ) : (
       <div class="gig-list">
         {upcomingGigs.map(({ slug, entry }) => (
-          <a class="card-link" href={localizeUrl(`${siteConfig.paths.gigs}/${slug}`, lang)}>
+          <div class="card-link">
             <GigCard
               title={entry.data.title}
+              href={localizeUrl(`${siteConfig.paths.gigs}/${slug}`, lang)}
               date={entry.data.date}
               venue={entry.data.venue}
               city={entry.data.city}
@@ -78,7 +79,7 @@ const jsonLd = {
               imageWidth={entry.data.imageWidth}
               imageHeight={entry.data.imageHeight}
             />
-          </a>
+          </div>
         ))}
       </div>
     )}

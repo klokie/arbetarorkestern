@@ -3,6 +3,7 @@ import ResponsiveImage from "@/components/ResponsiveImage.astro";
 
 interface Props {
   title: string;
+  href?: string;
   date: string | Date;
   venue: string;
   city?: string;
@@ -17,6 +18,7 @@ interface Props {
 }
 const {
   title,
+  href,
   date,
   venue,
   city,
@@ -43,7 +45,9 @@ const cta = ctaLabel ?? "Biljetter";
 <article class={`gig ${isPast ? "is-past" : ""} status-${status}`}>
   <div class="gig-body">
     <div class="gig-date">{dateLabel}</div>
-    <h3 class="gig-title">{title}</h3>
+    <h3 class="gig-title">
+      {href ? <a class="gig-title-link" href={href}>{title}</a> : title}
+    </h3>
     <div class="gig-where">
       <span>{venue}</span>{city && <span class="muted"> · {city}</span>}
     </div>
@@ -69,6 +73,7 @@ const cta = ctaLabel ?? "Biljetter";
 
 <style>
   .gig {
+    position: relative;
     border: 1px solid color-mix(in srgb, var(--primary) 13%, transparent);
     border-radius: var(--radius-card, 4px);
     padding: 20px 24px;
@@ -110,6 +115,19 @@ const cta = ctaLabel ?? "Biljetter";
     line-height: 1.1;
     color: var(--text);
   }
+  /* Stretched link: the title is the real link, but its ::after covers the
+     whole card so the entire card is clickable — without nesting <a> tags
+     (which would split the card in the parser). The ticket CTA sits above it. */
+  .gig-title-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .gig-title-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
   .gig-where {
     font-family: var(--font-body);
     font-size: 14px;
@@ -125,6 +143,9 @@ const cta = ctaLabel ?? "Biljetter";
     text-transform: uppercase;
   }
   .gig-cta {
+    position: relative;
+    z-index: 1;
+    align-self: flex-start;
     font-family: var(--font-body);
     font-size: 12px;
     color: var(--primary);

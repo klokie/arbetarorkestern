@@ -33,9 +33,10 @@ const past = all
     ) : (
       <div class="grid">
         {upcoming.map(({ slug, entry }) => (
-          <a class="card-link" href={localizeUrl(`${siteConfig.paths.gigs}/${slug}`, lang)}>
+          <div class="card-link">
             <GigCard
               title={entry.data.title}
+              href={localizeUrl(`${siteConfig.paths.gigs}/${slug}`, lang)}
               date={entry.data.date}
               venue={entry.data.venue}
               city={entry.data.city}
@@ -47,7 +48,7 @@ const past = all
               imageWidth={entry.data.imageWidth}
               imageHeight={entry.data.imageHeight}
             />
-          </a>
+          </div>
         ))}
       </div>
     )}
@@ -57,9 +58,10 @@ const past = all
         <h2>{t(lang, "gigs.past")}</h2>
         <div class="grid">
           {past.map(({ slug, entry }) => (
-            <a class="card-link" href={localizeUrl(`${siteConfig.paths.gigs}/${slug}`, lang)}>
+            <div class="card-link">
               <GigCard
                 title={entry.data.title}
+                href={localizeUrl(`${siteConfig.paths.gigs}/${slug}`, lang)}
                 date={entry.data.date}
                 venue={entry.data.venue}
                 city={entry.data.city}
@@ -70,7 +72,7 @@ const past = all
                 imageWidth={entry.data.imageWidth}
                 imageHeight={entry.data.imageHeight}
               />
-            </a>
+            </div>
           ))}
         </div>
       </>
