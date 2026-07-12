@@ -1,0 +1,36 @@
+name: Scheduled rebuild
+
+# The site is statically built, and the upcoming/past split for gigs is decided
+# at BUILD time (`now = Date.now()` in HomeView/GigsListView). Without a rebuild,
+# a gig keeps showing under "Kommande spelningar" after its date has passed.
+# This nightly job pushes an empty commit so Cloudflare's git integration
+# rebuilds with a fresh `now`, moving past gigs out of "upcoming" on their own.
+#
+# The push uses GITHUB_TOKEN, so it does NOT re-trigger GitHub Actions (no loop),
+# but Cloudflare Workers Builds still sees the push event and deploys.
+# Dial the cadence up/down via the cron below (default: daily 04:00 UTC).
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scheduled-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Empty commit to trigger a fresh Cloudflare deploy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore(deploy): scheduled rebuild (refresh date-based content)"
+          git push
