@@ -2,6 +2,7 @@
 import BaseLayout from "@klokie/theme/layouts/BaseLayout.astro";
 import SiteHeader from "@klokie/theme/components/SiteHeader.astro";
 import SiteFooter from "@klokie/theme/components/SiteFooter.astro";
+import Analytics from "@klokie/theme/components/Analytics.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import "@klokie/theme/tokens/jordsang.css";
 import { siteConfig } from "@/site/config";
@@ -106,6 +107,16 @@ const serializeJsonLd = (obj: object) =>
     {jsonLdArray.map((obj) => (
       <script type="application/ld+json" is:inline set:html={serializeJsonLd(obj)} />
     ))}
+    <Analytics
+      posthog={{
+        key: import.meta.env.PUBLIC_POSTHOG_KEY,
+        host: import.meta.env.PUBLIC_POSTHOG_HOST,
+      }}
+      sentry={{
+        dsn: import.meta.env.PUBLIC_SENTRY_DSN,
+        environment: import.meta.env.PUBLIC_SENTRY_ENV,
+      }}
+    />
   </Fragment>
   <SiteHeader
     title={siteConfig.title}
