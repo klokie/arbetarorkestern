@@ -110,7 +110,10 @@ const serializeJsonLd = (obj: object) =>
     <Analytics
       posthog={{
         key: import.meta.env.PUBLIC_POSTHOG_KEY,
-        host: import.meta.env.PUBLIC_POSTHOG_HOST,
+        // Default in code, not just in the Cloudflare build env: this site
+        // deploys via Workers Builds, so an unset dashboard variable would
+        // silently fall back to direct ingest and lose the proxy.
+        host: import.meta.env.PUBLIC_POSTHOG_HOST ?? "https://a.klokie.com",
       }}
       sentry={{
         dsn: import.meta.env.PUBLIC_SENTRY_DSN,
