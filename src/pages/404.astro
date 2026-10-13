@@ -1,0 +1,41 @@
+---
+import SiteLayout from "@/layouts/SiteLayout.astro";
+---
+
+<!-- Cloudflare serves this one file for every unknown path (both locales), so it is bilingual. -->
+<SiteLayout lang="sv" title="Sidan hittades inte" noindex>
+  <section class="container">
+    <h1>Sidan hittades inte</h1>
+    <p>Länken är fel eller sidan har flyttat. Prova någon av dessa:</p>
+    <ul>
+      <li><a href="/">Startsidan</a></li>
+      <li><a href="/spelningar">Spelningar</a></li>
+      <li><a href="/nyheter">Nyheter</a></li>
+      <li><a href="/om">Om</a></li>
+    </ul>
+    <p class="en">
+      Page not found. <a href="/en/">Go to the English site</a> ·
+      <a href="/en/spelningar">Shows</a>
+    </p>
+  </section>
+</SiteLayout>
+
+<style>
+  .container { max-width: 680px; margin: 0 auto; padding: 48px 24px; }
+  h1 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+  p, ul {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.65;
+    margin-bottom: 1.2em;
+  }
+  ul { padding-left: 1.4em; }
+  a { color: var(--primary); }
+  .en { opacity: 0.8; }
+</style>
